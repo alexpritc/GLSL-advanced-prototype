@@ -91,7 +91,7 @@ void Model::draw() {
     glBindTexture(GL_TEXTURE_2D, texturebuffer);
     glUniform1i(texturebuffer, 0);
 
-   glDrawArraysInstanced(GL_TRIANGLES, 0, vertices.size(), 100);
+    glDrawArraysInstanced(GL_TRIANGLES, 0, vertices.size(), 100);
 
     // Disable the arrays so the next draw call can be made.
     glDisableVertexAttribArray(0);

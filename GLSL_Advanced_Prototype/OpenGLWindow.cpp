@@ -8,6 +8,10 @@ float lastX = 800.0f / 2.0;
 float lastY = 600.0 / 2.0;
 float fov = 60.0f;
 
+// Shaders
+Shader _basicShader;
+Shader _noiseShader;
+
 // Lighting
 glm::vec3 lightPos(10.0f, 10.0f, 10.0f);
 glm::vec3 lightColor(0.9f, 0.9f, 0.9f);
@@ -19,8 +23,12 @@ const glm::vec3 sceneScale(1.0f, 1.75f, 1.0f);
 glm::vec3 cameraPos(50.0f, 0.0f, 50.0f);
 const glm::vec3 cameraUp(0.0f, 1.0f, 0.0f);
 
+// Models
 Model treeModel;
 Points snowflakes;
+Noise noise;
+
+bool nightVision;
 
 // Callbacks
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
@@ -58,36 +66,36 @@ bool OpenGLWindow::createOpenGLWindow(const std::string& windowTitle, bool showF
 
 	// Camera and shaders
 	_sceneCamera = Camera(cameraPos, cameraUp);
+	
 	_basicShader = Shader("shaders/basic.vert", "shaders/basic.frag");
-	_snowflakeShader = Shader("shaders/snowflakes.vert", "shaders/snowflakes.frag", "shaders/snowflakes.geom");
+	//_noiseShader = Shader("shaders/noise.vert", "shaders/noise.frag");
+
+	//_snowflakeShader = Shader("shaders/snowflakes.vert", "shaders/snowflakes.frag", "shaders/snowflakes.geom");
+
+	_basicShader.use();
 
 	// Models
 	treeModel.loadFromFile("media/Trees.obj", "media/Trees.mtl");
 	treeModel.loadTextureFromFile("media/noise_texture.jpg");
 
+	noise = Noise(_screenWidth, _screenHeight);
+	noise.GenerateNoise();
+
 	// Tree positions
 	int index = 0;
-	//float offset = 10.0f;
 	for (int x = 0; x < 10; x++)
 	{
 		for (int z = 0; z < 10; z++)
 		{
-			//float offset = 10.0f + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (20.0f - 10.0f)));
 			float offset = 30.0f + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (50.0f - 30.0f)));
 			glm::vec3 translation;
 			translation.x = (float)x * offset;
 			translation.y = 0.0f;
-
-			//offset = 15.0f + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (20.0f - 15.0f)));
 			offset = 50.0f + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (60.0f - 50.0f)));
 			translation.z = (float)z * offset;
 			translations[index++] = translation;
 		}
 	}
-
-	// Snowflakes
-	snowflakes.init();
-	snowflakes.loadTextureFromFile("media/snowflake_texture.jpg");
 
 	if (!showFullscreen)
 	{
@@ -124,8 +132,7 @@ void OpenGLWindow::renderScene() {
 	glDepthFunc(GL_LEQUAL);
 	glDepthRange(0.0f, 1.0f);
 	glClearDepth(1.0f);
-	glClearColor(0.9, 0.9, 0.9,1.0f);
-	//glClearColor(0.7, 0.2, 0.2, 1.0f);
+	glClearColor(0.9, 0.9, 0.9, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glShadeModel(GL_SMOOTH);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
@@ -147,13 +154,6 @@ void OpenGLWindow::renderScene() {
 	glm::mat4 model = glm::mat4(1.0f);
 	model = glm::scale(model, sceneScale);
 
-	//_snowflakeShader.use();
-	//_snowflakeShader.updateModelViewProjection(model, _sceneCamera.getViewMatrix(), glm::perspective(glm::radians(70.0f), (float)_screenWidth / _screenHeight, 0.3f, 100.0f));
-	//glUniform1i(glGetUniformLocation(_snowflakeShader.ID, "ourTexture"), 0);
-	//_snowflakeShader.setFloat("Size2", 0.15f);
-	//
-	//snowflakes.draw();
-
 	// Process shader(s)
 	_basicShader.use();
 	_basicShader.updateModelViewProjection(model, _sceneCamera.getViewMatrix(), _sceneCamera.getProjectionMatrix());
@@ -163,11 +163,18 @@ void OpenGLWindow::renderScene() {
 	_basicShader.setFloat("lightIntensity", lightIntensity);
 	_basicShader.setVec3("lightPos", lightPos);
 	_basicShader.setVec3("viewPos", _sceneCamera.getPosition());
-	
-	glm::vec3 temp(0.0, 0.0, 0.0);
+
+	_basicShader.setInt("width", _screenWidth);
+	_basicShader.setInt("height", _screenHeight);
+	_basicShader.setFloat("radius", _screenWidth / 3.5f); // used to be 3.5f
+
 	for (unsigned int i = 0; i < 100; i++)
 	{
 		_basicShader.setVec3("offsets[" + std::to_string(i) + "]", translations[i]);
+	}
+
+	if (nightVision) {
+		noise.render();
 	}
 
 	treeModel.draw();
@@ -204,6 +211,14 @@ void processInput(GLFWwindow* window)
 	}
 	if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS) {
 		fov = 10.0f;
+	}
+
+	// Fog toggle
+	if (glfwGetKey(window, GLFW_KEY_F) == GLFW_RELEASE) {
+		nightVision = false;
+	}
+	if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS) {
+		nightVision = true;
 	}
 }
 

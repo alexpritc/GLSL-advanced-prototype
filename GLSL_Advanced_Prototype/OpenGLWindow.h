@@ -18,6 +18,8 @@
 #include "ObjectLoader.h"
 #include "Model.h"
 #include "Points.h"
+#include "noisetex.h"
+#include "Noise.h"
 
 /**
  * Provides easy and convenient way to handle OpenGL Window creation and basic scene management (init, render and release).
@@ -55,7 +57,6 @@ private:
     int _screenWidth = 0;
     int _screenHeight = 0;
 
-    Shader _basicShader;
     Shader _snowflakeShader;
 
     Camera _sceneCamera;

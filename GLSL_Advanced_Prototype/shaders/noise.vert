@@ -33,6 +33,8 @@ void main()
 {
     vec3 offset = offsets[gl_InstanceID];
     fragPos = vec3(model * vec4(vertexPosition + offset, 1.0));
+    //fragPos = vec3(model * vec4(vertexPosition, 1.0));
+ 
     gl_Position = projection * view * vec4(fragPos, 1.0);
 
     normal = vertexNormal;

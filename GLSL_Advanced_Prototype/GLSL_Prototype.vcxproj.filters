@@ -36,6 +36,12 @@
     <ClCompile Include="Points.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="noisetex.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Noise.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="OpenGLWindow.h">
@@ -62,6 +68,12 @@
     <ClInclude Include="Points.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="noisetex.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Noise.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\basic.vert">
@@ -70,13 +82,10 @@
     <None Include="shaders\basic.frag">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="shaders\snowflakes.frag">
+    <None Include="shaders\noise.frag">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="shaders\snowflakes.vert">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="shaders\snowflakes.geom">
+    <None Include="shaders\noise.vert">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>

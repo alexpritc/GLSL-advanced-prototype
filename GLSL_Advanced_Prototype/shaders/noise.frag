@@ -31,6 +31,10 @@ uniform sampler2D renderTexture;
 subroutine vec4 RenderPassType();
 subroutine uniform RenderPassType RenderPass;
 
+out vec3 r;
+
+uniform bool isFogEnabled;
+
 //////// FOG /////////
 struct FogParameters
 {
@@ -79,7 +83,7 @@ vec4 firstPass()
     vec3 norm = normalize(normal);
     vec3 lightDir = normalize(lightPos - fragPos);
     float diff = max(dot(norm, lightDir), 0.0);
-    vec3 textDiff = texture( renderTexture, UV ).rgb;
+    vec3 textDiff = texture( ourTexture, UV ).rgb;
     vec3 diffuse = Kd * diff * lightColor * textDiff;
     
     // Specular
@@ -90,19 +94,7 @@ vec4 firstPass()
     vec3 specular = Ks * specularStrength * spec * lightColor;  
         
     vec3 result = (ambient + diffuse + specular);
-
-	// Apply fog calculation only if fog is enabled
-	FogParameters fogParams = FogParameters(vec3(0.9,0.9,0.9),0.3,0.75,0.1,1,true);
-
-	if (fogParams.isEnabled){
-      float fogCoordinate = abs(eyeSpacePos.z / eyeSpacePos.w);
-      vec4 outputCol = mix(vec4(result, 1.0), vec4(fogParams.color, 0.1), getFogFactor(fogParams, fogCoordinate));
-     
-	 return vec4(outputCol.xyz, alpha);
-	}
-	else{
-	  return vec4(result, 0.1);
-	  }
+	return vec4(result, 1.0);
 }
 
 subroutine(RenderPassType)
@@ -113,11 +105,12 @@ vec4 secondPass()
 		float green = luminance(color.rgb);
 
 		float dist1 = length(gl_FragCoord.xy - vec2(width/4.0, height/2.0));
-		float dist2 = length(gl_FragCoord.xy - vec2(3.0* width/4.0, height/2.0));
+		float dist2 = length(gl_FragCoord.zy - vec2(3.0* width/4.0, height/2.0));
 
 		if (dist1 > radius && dist2 > radius) green = 0.0;
 
-		return vec4(0.0, green * clamp(noise.a,0.0,1.0),0.0,0.5);
+		return vec4(0.0, green *clamp(noise.a,0.0,1.0),0.0,1.0);
+	
 }
 
 //////// MAIN ///////// 
@@ -125,4 +118,3 @@ void main()
 {
 	fragColor = RenderPass(); // This will either call firstPass() or secondPass()
 }
-
