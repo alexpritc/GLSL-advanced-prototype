@@ -29,13 +29,37 @@ out float alpha;
 
 smooth out vec4 eyeSpacePos;
 
+out vec2 textureCoords;
+
 void main()
 {
-    vec3 offset = offsets[gl_InstanceID];
-    fragPos = vec3(model * vec4(vertexPosition + offset, 1.0));
-    //fragPos = vec3(model * vec4(vertexPosition, 1.0));
- 
-    gl_Position = projection * view * vec4(fragPos, 1.0);
+ //      vec3 offset = offsets[gl_InstanceID];
+ //      fragPos = vec3(model * vec4(vertexPosition + offset, 1.0));
+//
+//    gl_Position = projection * view * vec4(fragPos, 1.0);
+
+    // Quad
+    const vec2 positions[6] = vec2[](
+        vec2(-1.0f,-1.0f),   // bottom left
+        vec2(1.0f,-1.0f),    // bottom right
+        vec2(1.0f,1.0f),     // top right
+        vec2(-1.0f,-1.0f),   // bottom left
+        vec2(1.0f,1.0f),   // top right
+        vec2(-1.0f,1.0f)    // top left
+    );
+    const vec2 coords[6] = vec2[](
+        vec2(0.0f, 0.0f),
+        vec2(1.0f,0.0f),
+        vec2(1.0f,1.0f),
+        vec2(0.0f,0.0f),
+        vec2(1.0f,1.0f),
+        vec2(0.0f,1.0f)
+    );
+
+    textureCoords = coords[gl_VertexID];
+    gl_Position = vec4(positions[gl_VertexID], 0.0, 1.0);
+
+    fragPos =  vec3(positions[gl_VertexID], 0.0);
 
     normal = vertexNormal;
     UV = vertexUV;
@@ -47,5 +71,5 @@ void main()
     alpha = dissolve;
 
     mat4 mvMatrix = view * model;
-    eyeSpacePos = mvMatrix * vec4(vertexPosition + offset, 1.0);
+    eyeSpacePos = mvMatrix * vec4(vertexPosition, 1.0);
 }

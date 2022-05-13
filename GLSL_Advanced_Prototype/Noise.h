@@ -22,7 +22,7 @@ public:
     Noise(int w, int h) {
         width = w;
         height - h;
-        noiseTex = NoiseTex::generatePeriodic2DTex(200.0f, 0.5f, 512, 512);
+        noiseTex = NoiseTex::generatePeriodic2DTex(200.0f, 0.5f, 1024, 1024);
     }
     void GenerateNoise();
 

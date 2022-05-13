@@ -34,12 +34,21 @@ class Points
 
     void draw();
 
+    float GetRandomNumber();
+
     private:
     GLuint texturebuffer;
-    GLuint spritebuffer;
-    GLuint _sprites;
-    int _numSprites = 50;
-    float* vertices = new float[_numSprites * 3];
+    GLuint pointbuffer;
+
+    unsigned int VBO, VAO;
+    //GLuint _sprites;
+    //int _numSprites = 50;
+    //float* vertices = new float[_numSprites * 3];
+
+    int numPoints = 100;
+
+    //std::vector<glm::vec3> points;
+    //glm::vec3 points[100];
 
     GLuint getProgramID() {
         GLuint i = 0;

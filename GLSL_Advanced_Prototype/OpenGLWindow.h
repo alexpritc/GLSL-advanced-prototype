@@ -64,5 +64,6 @@ private:
     GLuint _sprites;
     int _numSprites;
 
-    glm::vec3 translations[100];
+    glm::vec3 treeTranslations[100];
+    glm::vec3 flowerTranslations[100];
 };

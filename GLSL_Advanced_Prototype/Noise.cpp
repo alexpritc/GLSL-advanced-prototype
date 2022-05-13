@@ -6,6 +6,9 @@ Noise::Noise() {
 
 void Noise::GenerateNoise() {
 
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+	glEnable(GL_DEPTH_TEST);
+
 	setupFBO();
 
 	// Set up the buffers
@@ -35,8 +38,13 @@ void Noise::GenerateNoise() {
 	firstPassIndex = glGetSubroutineIndex(getProgramID(), GL_FRAGMENT_SHADER, "firstPass");
 	secondPassIndex = glGetSubroutineIndex(getProgramID(), GL_FRAGMENT_SHADER, "secondPass");
 
-	glActiveTexture(GL_TEXTURE1);
+	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, noiseTex);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 	glUniform1i(glGetUniformLocation(getProgramID(), "renderTexture"), 0);
 	glUniform1i(glGetUniformLocation(getProgramID(), "noiseTexture"), 1);
@@ -51,6 +59,7 @@ void Noise::setupFBO() {
 	glGenTextures(1, &renderTex);
 	glBindTexture(GL_TEXTURE_2D, renderTex);
 	glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, width, height);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, &renderTex);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
@@ -84,36 +93,31 @@ void Noise::firstPass() {
 	glBindFramebuffer(GL_FRAMEBUFFER, renderbuffer);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glEnable(GL_DEPTH_TEST);
-	glDepthRange(0.0f, 1.0f);
-	glClearDepth(1.0f);
-	glClearColor(0.0, 0.0, 0.0, 1.0f);
+	glDisable(GL_BLEND);
+	glClearColor(0.0f, 0.2f, 0.0f, 1.0f);
 	glUniformSubroutinesuiv(GL_FRAGMENT_SHADER, 1, &firstPassIndex);
 }
 
 void Noise::secondPass() {
-	GenerateNoise();
-	glEnableVertexAttribArray(0);
-	glBindBuffer(GL_ARRAY_BUFFER, handle[0]);
-	glVertexAttribPointer(3, 1, GL_FLOAT, GL_FALSE, 0, (void*)0);
-
-	glEnableVertexAttribArray(2);
-	glBindBuffer(GL_ARRAY_BUFFER, handle[2]);
-	glVertexAttribPointer(6, 1, GL_FLOAT, GL_FALSE, 0, (void*)0);
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, renderTex);
-	glUniform1i(renderTex, 0);
 
+	glDisable(GL_DEPTH_BUFFER);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	glDisable(GL_CULL_FACE);
 	glClear(GL_COLOR_BUFFER_BIT);
-
 
 	glUniformSubroutinesuiv(GL_FRAGMENT_SHADER, 1, &secondPassIndex);
 
 	// Render the full-screen quad
 	glBindVertexArray(fsQuad);
-	glDrawArrays(GL_TRIANGLES, 0, 6);
+	glDrawArrays(GL_TRIANGLE_STRIP, 0, 6);
 
 	glDisableVertexAttribArray(0);
+	glDisableVertexAttribArray(1);
 }
-

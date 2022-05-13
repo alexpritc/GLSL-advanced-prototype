@@ -6,57 +6,386 @@ Points::Points()
 
 void Points::init() 
 {
-    // Snowflakes
     srand((unsigned int)time(0));
 
-    for (int i = 0; i < _numSprites; i++)
-    {
-        glm::vec3 p(((float)rand() / RAND_MAX * 2.0f) - 1.0f,
-            ((float)rand() / RAND_MAX * 2.0f) - 1.0f,
-            ((float)rand() / RAND_MAX * 2.0f) - 1.0f);
+    // Flower positions
 
-        vertices[i * 3] = p.x;
-        vertices[i * 3 + 1] = p.y;
-        vertices[i * 3 + 2] = p.z;
-    }
+    //numPoints = 100;
+    //points = new float[numPoints * 3];
 
-    glGenBuffers(1, &spritebuffer);
-    glBindBuffer(GL_ARRAY_BUFFER, spritebuffer);
-    glBufferData(GL_ARRAY_BUFFER, _numSprites * 3 * sizeof(float), vertices, GL_STATIC_DRAW);
+    //for (int i = 0; i < numPoints; i++) {
 
-    delete[] vertices;
+    //    glm::vec2 p(((float)rand() / RAND_MAX * 10.0f) - 1.0f,
+    //        ((float)rand() / RAND_MAX * 10.0f) - 1.0f);
 
-    glGenVertexArrays(1, &_sprites);
-    glBindVertexArray(_sprites);
+    //    points[i * 3] = p.x;
+    //    points[i * 3 + 1] = p.y;
+    //    points[i * 3 + 2] = 0.0f;
+    //}
 
-    glBindBuffer(GL_ARRAY_BUFFER, spritebuffer);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, ((GLubyte*)NULL + (0)));
+    // set up vertex data (and buffer(s)) and configure vertex attributes
+    // ------------------------------------------------------------------
+   float points[] = {
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+                GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+            GetRandomNumber(), 0.0f, GetRandomNumber(),
+            GetRandomNumber(), 0.0f, GetRandomNumber(),
+            GetRandomNumber(), 0.0f, GetRandomNumber(),
+            GetRandomNumber(), 0.0f, GetRandomNumber(),
+            GetRandomNumber(), 0.0f, GetRandomNumber(),
+            GetRandomNumber(), 0.0f, GetRandomNumber(),
+            GetRandomNumber(), 0.0f, GetRandomNumber(),
+            GetRandomNumber(), 0.0f, GetRandomNumber(),
+            GetRandomNumber(), 0.0f, GetRandomNumber(),
+            GetRandomNumber(), 0.0f, GetRandomNumber(),
+            GetRandomNumber(), 0.0f, GetRandomNumber(),
+            GetRandomNumber(), 0.0f, GetRandomNumber(),
+            GetRandomNumber(), 0.0f, GetRandomNumber(),
+            GetRandomNumber(), 0.0f, GetRandomNumber(),
+            GetRandomNumber(), 0.0f, GetRandomNumber(),
+            GetRandomNumber(), 0.0f, GetRandomNumber(),
+            GetRandomNumber(), 0.0f, GetRandomNumber(),
+            GetRandomNumber(), 0.0f, GetRandomNumber(),
+            GetRandomNumber(), 0.0f, GetRandomNumber(),
+            GetRandomNumber(), 0.0f, GetRandomNumber(),
+            GetRandomNumber(), 0.0f, GetRandomNumber(),
+            GetRandomNumber(), 0.0f, GetRandomNumber(),
+            GetRandomNumber(), 0.0f, GetRandomNumber(),
+            GetRandomNumber(), 0.0f, GetRandomNumber(),
+            GetRandomNumber(), 0.0f, GetRandomNumber(),
+            GetRandomNumber(), 0.0f, GetRandomNumber(),
+            GetRandomNumber(), 0.0f, GetRandomNumber(),
+            GetRandomNumber(), 0.0f, GetRandomNumber(),
+            GetRandomNumber(), 0.0f, GetRandomNumber(),
+            GetRandomNumber(), 0.0f, GetRandomNumber(),
+            GetRandomNumber(), 0.0f, GetRandomNumber(),
+            GetRandomNumber(), 0.0f, GetRandomNumber(),
+            GetRandomNumber(), 0.0f, GetRandomNumber(),
+            GetRandomNumber(), 0.0f, GetRandomNumber(),
+            GetRandomNumber(), 0.0f, GetRandomNumber(),
+            GetRandomNumber(), 0.0f, GetRandomNumber(),
+            GetRandomNumber(), 0.0f, GetRandomNumber(),
+            GetRandomNumber(), 0.0f, GetRandomNumber(),
+            GetRandomNumber(), 0.0f, GetRandomNumber(),
+            GetRandomNumber(), 0.0f, GetRandomNumber(),
+            GetRandomNumber(), 0.0f, GetRandomNumber(),
+            GetRandomNumber(), 0.0f, GetRandomNumber(),
+            GetRandomNumber(), 0.0f, GetRandomNumber(),
+            GetRandomNumber(), 0.0f, GetRandomNumber(),
+            GetRandomNumber(), 0.0f, GetRandomNumber(),
+            GetRandomNumber(), 0.0f, GetRandomNumber(),
+            GetRandomNumber(), 0.0f, GetRandomNumber(),
+            GetRandomNumber(), 0.0f, GetRandomNumber(),
+            GetRandomNumber(), 0.0f, GetRandomNumber(),
+            GetRandomNumber(), 0.0f, GetRandomNumber(),
+            GetRandomNumber(), 0.0f, GetRandomNumber(),
+            GetRandomNumber(), 0.0f, GetRandomNumber(),
+            GetRandomNumber(), 0.0f, GetRandomNumber(),
+            GetRandomNumber(), 0.0f, GetRandomNumber(),
+            GetRandomNumber(), 0.0f, GetRandomNumber(),
+            GetRandomNumber(), 0.0f, GetRandomNumber(),
+            GetRandomNumber(), 0.0f, GetRandomNumber(),
+            GetRandomNumber(), 0.0f, GetRandomNumber(),
+            GetRandomNumber(), 0.0f, GetRandomNumber(),
+            GetRandomNumber(), 0.0f, GetRandomNumber(),
+            GetRandomNumber(), 0.0f, GetRandomNumber(),
+            GetRandomNumber(), 0.0f, GetRandomNumber(),
+            GetRandomNumber(), 0.0f, GetRandomNumber(),
+            GetRandomNumber(), 0.0f, GetRandomNumber(),
+            GetRandomNumber(), 0.0f, GetRandomNumber(),
+            GetRandomNumber(), 0.0f, GetRandomNumber(),
+            GetRandomNumber(), 0.0f, GetRandomNumber(),
+            GetRandomNumber(), 0.0f, GetRandomNumber(),
+            GetRandomNumber(), 0.0f, GetRandomNumber(),
+            GetRandomNumber(), 0.0f, GetRandomNumber(),
+            GetRandomNumber(), 0.0f, GetRandomNumber(),
+            GetRandomNumber(), 0.0f, GetRandomNumber(),
+            GetRandomNumber(), 0.0f, GetRandomNumber(),
+            GetRandomNumber(), 0.0f, GetRandomNumber(),
+            GetRandomNumber(), 0.0f, GetRandomNumber(),
+            GetRandomNumber(), 0.0f, GetRandomNumber(),
+            GetRandomNumber(), 0.0f, GetRandomNumber(),
+            GetRandomNumber(), 0.0f, GetRandomNumber(),
+            GetRandomNumber(), 0.0f, GetRandomNumber(),
+            GetRandomNumber(), 0.0f, GetRandomNumber(),
+            GetRandomNumber(), 0.0f, GetRandomNumber(),
+            GetRandomNumber(), 0.0f, GetRandomNumber(),
+            GetRandomNumber(), 0.0f, GetRandomNumber(),
+            GetRandomNumber(), 0.0f, GetRandomNumber(),
+            GetRandomNumber(), 0.0f, GetRandomNumber(),
+            GetRandomNumber(), 0.0f, GetRandomNumber(),
+            GetRandomNumber(), 0.0f, GetRandomNumber(),
+            GetRandomNumber(), 0.0f, GetRandomNumber(),
+            GetRandomNumber(), 0.0f, GetRandomNumber(),
+            GetRandomNumber(), 0.0f, GetRandomNumber(),
+            GetRandomNumber(), 0.0f, GetRandomNumber(),
+            GetRandomNumber(), 0.0f, GetRandomNumber(),
+            GetRandomNumber(), 0.0f, GetRandomNumber(),
+            GetRandomNumber(), 0.0f, GetRandomNumber(),
+            GetRandomNumber(), 0.0f, GetRandomNumber(),
+            GetRandomNumber(), 0.0f, GetRandomNumber(),
+            GetRandomNumber(), 0.0f, GetRandomNumber(),
+            GetRandomNumber(), 0.0f, GetRandomNumber(),
+            GetRandomNumber(), 0.0f, GetRandomNumber(),
+            GetRandomNumber(), 0.0f, GetRandomNumber(),
+            GetRandomNumber(), 0.0f, GetRandomNumber(),
+            GetRandomNumber(), 0.0f, GetRandomNumber(),
+                GetRandomNumber(), 0.0f, GetRandomNumber(),
+                GetRandomNumber(), 0.0f, GetRandomNumber(),
+                GetRandomNumber(), 0.0f, GetRandomNumber(),
+                GetRandomNumber(), 0.0f, GetRandomNumber(),
+                GetRandomNumber(), 0.0f, GetRandomNumber(),
+                GetRandomNumber(), 0.0f, GetRandomNumber(),
+                GetRandomNumber(), 0.0f, GetRandomNumber(),
+                GetRandomNumber(), 0.0f, GetRandomNumber(),
+                GetRandomNumber(), 0.0f, GetRandomNumber(),
+                GetRandomNumber(), 0.0f, GetRandomNumber(),
+                GetRandomNumber(), 0.0f, GetRandomNumber(),
+                GetRandomNumber(), 0.0f, GetRandomNumber(),
+                GetRandomNumber(), 0.0f, GetRandomNumber(),
+                GetRandomNumber(), 0.0f, GetRandomNumber(),
+                GetRandomNumber(), 0.0f, GetRandomNumber(),
+                GetRandomNumber(), 0.0f, GetRandomNumber(),
+                GetRandomNumber(), 0.0f, GetRandomNumber(),
+                GetRandomNumber(), 0.0f, GetRandomNumber(),
+                GetRandomNumber(), 0.0f, GetRandomNumber(),
+                GetRandomNumber(), 0.0f, GetRandomNumber(),
+                GetRandomNumber(), 0.0f, GetRandomNumber(),
+                GetRandomNumber(), 0.0f, GetRandomNumber(),
+                GetRandomNumber(), 0.0f, GetRandomNumber(),
+                GetRandomNumber(), 0.0f, GetRandomNumber(),
+                GetRandomNumber(), 0.0f, GetRandomNumber(),
+                GetRandomNumber(), 0.0f, GetRandomNumber(),
+                GetRandomNumber(), 0.0f, GetRandomNumber(),
+                GetRandomNumber(), 0.0f, GetRandomNumber(),
+                GetRandomNumber(), 0.0f, GetRandomNumber(),
+                GetRandomNumber(), 0.0f, GetRandomNumber(),
+                GetRandomNumber(), 0.0f, GetRandomNumber(),
+                GetRandomNumber(), 0.0f, GetRandomNumber(),
+                GetRandomNumber(), 0.0f, GetRandomNumber(),
+                GetRandomNumber(), 0.0f, GetRandomNumber(),
+                GetRandomNumber(), 0.0f, GetRandomNumber(),
+                GetRandomNumber(), 0.0f, GetRandomNumber(),
+                GetRandomNumber(), 0.0f, GetRandomNumber(),
+                GetRandomNumber(), 0.0f, GetRandomNumber(),
+                GetRandomNumber(), 0.0f, GetRandomNumber(),
+                GetRandomNumber(), 0.0f, GetRandomNumber(),
+                GetRandomNumber(), 0.0f, GetRandomNumber(),
+                GetRandomNumber(), 0.0f, GetRandomNumber(),
+                GetRandomNumber(), 0.0f, GetRandomNumber(),
+                GetRandomNumber(), 0.0f, GetRandomNumber(),
+                GetRandomNumber(), 0.0f, GetRandomNumber(),
+                GetRandomNumber(), 0.0f, GetRandomNumber(),
+                GetRandomNumber(), 0.0f, GetRandomNumber(),
+                GetRandomNumber(), 0.0f, GetRandomNumber(),
+                GetRandomNumber(), 0.0f, GetRandomNumber(),
+                GetRandomNumber(), 0.0f, GetRandomNumber(),
+                GetRandomNumber(), 0.0f, GetRandomNumber(),
+                        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+        GetRandomNumber(),  0.0f, GetRandomNumber(),
+    };
 
+    //unsigned int VBO, VAO;
+    glGenBuffers(1, &VBO);
+    glGenVertexArrays(1, &VAO);
+    glBindVertexArray(VAO);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(points), &points, GL_STATIC_DRAW);
     glEnableVertexAttribArray(0);
-
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), 0);
     glBindVertexArray(0);
+}
+
+float Points::GetRandomNumber() {
+
+    return -100.0f + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (100.0f - -100.0f)));
 }
 
 void Points::draw()
 {
-    glBindVertexArray(_sprites);
-    glDrawArrays(GL_POINTS, 0, _numSprites);
+    //glGenBuffers(1, &VBO);
+    //glGenVertexArrays(1, &VAO);
+    //glBindVertexArray(VAO);
+    //glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    //glBufferData(GL_ARRAY_BUFFER, sizeof(points), &points, GL_STATIC_DRAW);
+    //// Points
+    //glEnableVertexAttribArray(0);
+    //glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), 0);
+    //// Colours
+    //glEnableVertexAttribArray(1);
+    //glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(2 * sizeof(float)));
+    //glBindVertexArray(0);
 
     // Pass the texture to the shader.
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, texturebuffer);
     glUniform1i(texturebuffer, 0);
 
-    glFinish();
-
-    // Disable the arrays so the next draw call can be made.
-    glDisableVertexAttribArray(0);
-
-    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    glBindVertexArray(VAO);
+    glEnable(GL_PROGRAM_POINT_SIZE);
+    glPointSize(10);
+    glDrawArrays(GL_POINTS, 0, numPoints);
 }
 
 void Points::loadTextureFromFile(const char* filePath) {
     if (strcmp(filePath, "") != 0) {
+        stbi_set_flip_vertically_on_load(1);
         printf("Loading Image %s...", filePath);
         GLint programID = getProgramID();
         glGenTextures(1, &texturebuffer);

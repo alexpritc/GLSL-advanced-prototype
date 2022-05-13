@@ -24,10 +24,11 @@ class Model
 
     void loadFromFile(const char* filePath, const char* mtlPath);
 
-    void draw();
+    void draw(int numberOfInstances = 100);
 
     void loadTextureFromFile(const char* filePath);
 
+    void bind();
 
     private:
     std::vector<Vertex> mesh;
@@ -56,6 +57,9 @@ class Model
     GLuint dissolvebuffer;
 
     GLuint texturebuffer;
+
+    GLuint vao;
+    unsigned int VBO, VAO;
 
     GLuint getProgramID() {
 

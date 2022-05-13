@@ -23,6 +23,21 @@ void Model::loadFromFile(const char* objPath, const char* mtlPath) {
 
         dissolves.push_back(mesh[i].material.dissolve);
     }
+}
+
+void Model::draw(int numberOfInstances) {
+
+    if (numberOfInstances > 100) {
+        numberOfInstances = 100;
+    }
+    else if (numberOfInstances <= 0) {
+        numberOfInstances = 1;
+    }
+
+    glGenBuffers(1, &VBO);
+    glGenVertexArrays(1, &VAO);
+    glBindVertexArray(VAO);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
 
     // OBj info 
     glGenBuffers(1, &vertexbuffer);
@@ -53,9 +68,6 @@ void Model::loadFromFile(const char* objPath, const char* mtlPath) {
     glGenBuffers(1, &dissolvebuffer);
     glBindBuffer(GL_ARRAY_BUFFER, dissolvebuffer);
     glBufferData(GL_ARRAY_BUFFER, dissolves.size() * sizeof(float), &dissolves[0], GL_STATIC_DRAW);
-}
-
-void Model::draw() {
 
     // Enable the vertex, uv, normal buffers, and lighting buffers.
     glEnableVertexAttribArray(0);
@@ -91,18 +103,8 @@ void Model::draw() {
     glBindTexture(GL_TEXTURE_2D, texturebuffer);
     glUniform1i(texturebuffer, 0);
 
-    glDrawArraysInstanced(GL_TRIANGLES, 0, vertices.size(), 100);
-
-    // Disable the arrays so the next draw call can be made.
-    glDisableVertexAttribArray(0);
-    glDisableVertexAttribArray(1);
-    glDisableVertexAttribArray(2);
-    glDisableVertexAttribArray(3);
-    glDisableVertexAttribArray(4);
-    glDisableVertexAttribArray(5);
-    glDisableVertexAttribArray(6);
-
-    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    glBindVertexArray(VAO);
+    glDrawArraysInstanced(GL_TRIANGLES, 0, vertices.size(), numberOfInstances);
 }
 
 void Model::loadTextureFromFile(const char* filePath) {

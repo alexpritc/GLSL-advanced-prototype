@@ -94,7 +94,7 @@ void Camera::processInput(GLFWwindow* window, float deltaTime)
             cameraSpeed;
     }
 
-   _position.y = 7.5f;
+   _position.y = 4.5f;
 
     glm::vec3 direction;
 

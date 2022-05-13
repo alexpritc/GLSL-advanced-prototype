@@ -11,6 +11,7 @@ float fov = 60.0f;
 // Shaders
 Shader _basicShader;
 Shader _noiseShader;
+Shader _flowerShader;
 
 // Lighting
 glm::vec3 lightPos(10.0f, 10.0f, 10.0f);
@@ -20,12 +21,15 @@ float lightIntensity = 0.25f;
 const glm::vec3 sceneScale(1.0f, 1.75f, 1.0f);
 
 // Camera
-glm::vec3 cameraPos(50.0f, 0.0f, 50.0f);
+glm::vec3 cameraPos(1.0f, 0.0f, 1.0f);
 const glm::vec3 cameraUp(0.0f, 1.0f, 0.0f);
 
 // Models
 Model treeModel;
-Points snowflakes;
+Model floorModel;
+
+Points flowers;
+
 Noise noise;
 
 bool nightVision;
@@ -69,17 +73,21 @@ bool OpenGLWindow::createOpenGLWindow(const std::string& windowTitle, bool showF
 	
 	_basicShader = Shader("shaders/basic.vert", "shaders/basic.frag");
 	//_noiseShader = Shader("shaders/noise.vert", "shaders/noise.frag");
-
-	//_snowflakeShader = Shader("shaders/snowflakes.vert", "shaders/snowflakes.frag", "shaders/snowflakes.geom");
-
-	_basicShader.use();
+	_flowerShader = Shader("shaders/flowers.vert", "shaders/flowers.frag", "shaders/flowers.geom");
 
 	// Models
 	treeModel.loadFromFile("media/Trees.obj", "media/Trees.mtl");
-	treeModel.loadTextureFromFile("media/noise_texture.jpg");
+	treeModel.loadTextureFromFile("media/no_texture.png");
 
-	noise = Noise(_screenWidth, _screenHeight);
-	noise.GenerateNoise();
+	floorModel.loadFromFile("media/Terrain.obj", "media/Terrain.mtl");
+	floorModel.loadTextureFromFile("media/minecraftgrass_texture.png");
+
+	// Points
+	flowers.init();;
+	flowers.loadTextureFromFile("media/flowers_texture.png");
+
+	//noise = Noise(_screenWidth, _screenHeight);
+	//noise.GenerateNoise();
 
 	// Tree positions
 	int index = 0;
@@ -87,13 +95,13 @@ bool OpenGLWindow::createOpenGLWindow(const std::string& windowTitle, bool showF
 	{
 		for (int z = 0; z < 10; z++)
 		{
-			float offset = 30.0f + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (50.0f - 30.0f)));
+			float offset = -100.0f + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (100.0f - -100.0f)));
 			glm::vec3 translation;
-			translation.x = (float)x * offset;
+			translation.x = offset;
 			translation.y = 0.0f;
-			offset = 50.0f + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (60.0f - 50.0f)));
-			translation.z = (float)z * offset;
-			translations[index++] = translation;
+			offset = -100.0f + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (100.0f - -100.0f)));
+			translation.z = offset;
+			treeTranslations[index++] = translation;
 		}
 	}
 
@@ -128,11 +136,13 @@ void OpenGLWindow::renderScene() {
 
 	// Rendering commands here
 	glEnable(GL_DEPTH_TEST);
+	//glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glDepthMask(GL_TRUE);
 	glDepthFunc(GL_LEQUAL);
 	glDepthRange(0.0f, 1.0f);
 	glClearDepth(1.0f);
-	glClearColor(0.9, 0.9, 0.9, 1.0f);
+	glClearColor(0.5, 0.8, 0.9, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glShadeModel(GL_SMOOTH);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
@@ -154,6 +164,13 @@ void OpenGLWindow::renderScene() {
 	glm::mat4 model = glm::mat4(1.0f);
 	model = glm::scale(model, sceneScale);
 
+	_flowerShader.use();
+	_flowerShader.updateModelViewProjection(model, _sceneCamera.getViewMatrix(), _sceneCamera.getProjectionMatrix());
+
+	flowers.draw();
+
+	glFinish();
+
 	// Process shader(s)
 	_basicShader.use();
 	_basicShader.updateModelViewProjection(model, _sceneCamera.getViewMatrix(), _sceneCamera.getProjectionMatrix());
@@ -170,14 +187,13 @@ void OpenGLWindow::renderScene() {
 
 	for (unsigned int i = 0; i < 100; i++)
 	{
-		_basicShader.setVec3("offsets[" + std::to_string(i) + "]", translations[i]);
+		_basicShader.setVec3("offsets[" + std::to_string(i) + "]", treeTranslations[i]);
 	}
 
-	if (nightVision) {
-		noise.render();
-	}
+	treeModel.draw(10);
+	floorModel.draw(1);
 
-	treeModel.draw();
+	glFinish();
 
 	// Check and call events and swap the buffers
 	glfwPollEvents();

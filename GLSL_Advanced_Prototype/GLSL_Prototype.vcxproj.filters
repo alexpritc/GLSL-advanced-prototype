@@ -82,10 +82,13 @@
     <None Include="shaders\basic.frag">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="shaders\noise.frag">
+    <None Include="shaders\flowers.frag">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="shaders\noise.vert">
+    <None Include="shaders\flowers.geom">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="shaders\flowers.vert">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>
