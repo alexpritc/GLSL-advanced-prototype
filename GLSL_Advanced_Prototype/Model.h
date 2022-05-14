@@ -24,7 +24,7 @@ class Model
 
     void loadFromFile(const char* filePath, const char* mtlPath);
 
-    void draw(int numberOfInstances = 100);
+    void draw(int numberOfInstances = 1);
 
     void loadTextureFromFile(const char* filePath);
 

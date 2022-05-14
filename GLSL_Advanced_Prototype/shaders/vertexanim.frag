@@ -12,8 +12,6 @@ in float alpha;
 
 in vec4 eyeSpacePos;
 
-in vec2 textureCoords;
-
 layout (location = 0) out vec4 fragColor;
 
 uniform vec3 lightPos; 
@@ -32,10 +30,6 @@ uniform sampler2D renderTexture;
 
 subroutine vec4 RenderPassType();
 subroutine uniform RenderPassType RenderPass;
-
-out vec3 r;
-
-uniform bool isFogEnabled;
 
 //////// FOG /////////
 struct FogParameters
@@ -85,7 +79,7 @@ vec4 firstPass()
     vec3 norm = normalize(normal);
     vec3 lightDir = normalize(lightPos - fragPos);
     float diff = max(dot(norm, lightDir), 0.0);
-    vec3 textDiff = texture( ourTexture, textureCoords ).rgb;
+    vec3 textDiff = texture( renderTexture, UV ).rgb;
     vec3 diffuse = Kd * diff * lightColor * textDiff;
     
     // Specular
@@ -96,44 +90,23 @@ vec4 firstPass()
     vec3 specular = Ks * specularStrength * spec * lightColor;  
         
     vec3 result = (ambient + diffuse + specular);
-	return vec4(result, 0.5);
-}
 
-subroutine(RenderPassType)
-vec4 secondPass()
-{
-		vec4 noise = texture(noiseTexture, textureCoords);
-		vec4 color = texture(renderTexture, textureCoords);
+	// Apply fog calculation only if fog is enabled
+	FogParameters fogParams = FogParameters(vec3(0.9,0.9,0.9),0.3,0.75,0.1,1,false);
 
-		if(noise.a < 0.1) discard;
-
-
-		float green = luminance(color.rgb);
-
-		float dist1 = length(gl_FragCoord.xy - vec2(width/4.0, height/2.0));
-		float dist2 = length(gl_FragCoord.xy - vec2(3.0* width/4.0, height/2.0));
-	
-		if (dist1 > radius && dist2 > radius) green = 0.0;
-
-		return vec4(0.0, green * clamp(noise.a,0.0,1.0),0.0,0.2);
+	if (fogParams.isEnabled){
+      float fogCoordinate = abs(eyeSpacePos.z / eyeSpacePos.w);
+      vec4 outputCol = mix(vec4(result, 1.0), vec4(fogParams.color, 0.1), getFogFactor(fogParams, fogCoordinate));
+     
+	 return vec4(outputCol.xyz, alpha);
+	}
+	else{
+	  return vec4(result, 0.9f);
+	  }
 }
 
 //////// MAIN ///////// 
 void main() 
 {
-		vec4 noise = texture(noiseTexture, textureCoords);
-		vec4 color = texture(renderTexture, textureCoords);
-
-		if(noise.a < 0.1) discard;
-		if(color.a < 0.1) discard;
-
-		float green = luminance(color.rgb);
-
-		float dist1 = length(gl_FragCoord.xy - vec2(width/4.0, height/2.0));
-		float dist2 = length(gl_FragCoord.xy - vec2(3.0* width/4.0, height/2.0));
-	
-		if (dist1 > radius && dist2 > radius) green = 0.0;
-
-		fragColor = vec4(0.0, green * clamp(noise.a,0.0,1.0),0.0,1.0);
-	//fragColor = RenderPass(); // This will either call firstPass() or secondPass()
+	fragColor = RenderPass(); // This will call firstPass()
 }

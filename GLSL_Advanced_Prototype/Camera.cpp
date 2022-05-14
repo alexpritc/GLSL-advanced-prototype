@@ -94,6 +94,23 @@ void Camera::processInput(GLFWwindow* window, float deltaTime)
             cameraSpeed;
     }
 
+
+    // Limit the player's position to the island
+    if (_position.x > 115.0f) {
+        _position.x = 115.0f;
+    }
+    else if (_position.x < -115.0f) {
+        _position.x = -115.0f;
+    }
+
+    if (_position.z > 115.0f) {
+        _position.z = 115.0f;
+    }
+    else if (_position.z < -115.0f) {
+        _position.z = -115.0f;
+    }
+
+    // Limit the player's y so they're always on the floor
    _position.y = 4.5f;
 
     glm::vec3 direction;

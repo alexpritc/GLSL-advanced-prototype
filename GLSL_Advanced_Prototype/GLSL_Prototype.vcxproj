@@ -168,11 +168,13 @@
     <ClInclude Include="Vertex.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="shaders\basic.frag" />
-    <None Include="shaders\basic.vert" />
-    <None Include="shaders\flowers.frag" />
-    <None Include="shaders\flowers.geom" />
-    <None Include="shaders\flowers.vert" />
+    <None Include="shaders\instancing.frag" />
+    <None Include="shaders\instancing.vert" />
+    <None Include="shaders\points.frag" />
+    <None Include="shaders\points.geom" />
+    <None Include="shaders\points.vert" />
+    <None Include="shaders\vertexanim.frag" />
+    <None Include="shaders\vertexanim.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

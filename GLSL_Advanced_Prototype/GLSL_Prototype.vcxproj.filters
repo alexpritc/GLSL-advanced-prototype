@@ -76,19 +76,25 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="shaders\basic.vert">
+    <None Include="shaders\instancing.vert">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="shaders\basic.frag">
+    <None Include="shaders\instancing.frag">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="shaders\flowers.frag">
+    <None Include="shaders\points.frag">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="shaders\flowers.geom">
+    <None Include="shaders\points.geom">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="shaders\flowers.vert">
+    <None Include="shaders\points.vert">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="shaders\vertexanim.frag">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="shaders\vertexanim.vert">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>

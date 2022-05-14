@@ -9,30 +9,28 @@ float lastY = 600.0 / 2.0;
 float fov = 60.0f;
 
 // Shaders
-Shader _basicShader;
-Shader _noiseShader;
-Shader _flowerShader;
+Shader instancingShader;
+Shader pointsShader;
+Shader vertexanimShader;
 
 // Lighting
-glm::vec3 lightPos(10.0f, 10.0f, 10.0f);
+glm::vec3 lightPos(10.0f, 25.0f, 10.0f);
 glm::vec3 lightColor(0.9f, 0.9f, 0.9f);
-float lightIntensity = 0.25f;
+float lightIntensity = 0.10f;
 
 const glm::vec3 sceneScale(1.0f, 1.75f, 1.0f);
 
 // Camera
-glm::vec3 cameraPos(1.0f, 0.0f, 1.0f);
+glm::vec3 cameraPos(5.0f, 0.0f, 5.0f);
 const glm::vec3 cameraUp(0.0f, 1.0f, 0.0f);
 
 // Models
 Model treeModel;
 Model floorModel;
+Model oceanModel;
 
+// Point sprites
 Points flowers;
-
-Noise noise;
-
-bool nightVision;
 
 // Callbacks
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
@@ -71,23 +69,23 @@ bool OpenGLWindow::createOpenGLWindow(const std::string& windowTitle, bool showF
 	// Camera and shaders
 	_sceneCamera = Camera(cameraPos, cameraUp);
 	
-	_basicShader = Shader("shaders/basic.vert", "shaders/basic.frag");
-	//_noiseShader = Shader("shaders/noise.vert", "shaders/noise.frag");
-	_flowerShader = Shader("shaders/flowers.vert", "shaders/flowers.frag", "shaders/flowers.geom");
+	instancingShader = Shader("shaders/instancing.vert", "shaders/instancing.frag");
+	pointsShader = Shader("shaders/points.vert", "shaders/points.frag", "shaders/points.geom");
+	vertexanimShader = Shader("shaders/vertexanim.vert", "shaders/vertexanim.frag");
 
 	// Models
 	treeModel.loadFromFile("media/Trees.obj", "media/Trees.mtl");
-	treeModel.loadTextureFromFile("media/no_texture.png");
+	treeModel.loadTextureFromFile("media/noise_texture.jpg");
 
 	floorModel.loadFromFile("media/Terrain.obj", "media/Terrain.mtl");
 	floorModel.loadTextureFromFile("media/minecraftgrass_texture.png");
 
+	oceanModel.loadFromFile("media/Ocean.obj", "media/Ocean.mtl");
+	oceanModel.loadTextureFromFile("media/no_texture.png");
+
 	// Points
 	flowers.init();;
 	flowers.loadTextureFromFile("media/flowers_texture.png");
-
-	//noise = Noise(_screenWidth, _screenHeight);
-	//noise.GenerateNoise();
 
 	// Tree positions
 	int index = 0;
@@ -95,12 +93,19 @@ bool OpenGLWindow::createOpenGLWindow(const std::string& windowTitle, bool showF
 	{
 		for (int z = 0; z < 10; z++)
 		{
-			float offset = -100.0f + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (100.0f - -100.0f)));
 			glm::vec3 translation;
-			translation.x = offset;
-			translation.y = 0.0f;
-			offset = -100.0f + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (100.0f - -100.0f)));
-			translation.z = offset;
+			if (index == 0) {
+				translation.x = 0.0f;
+				translation.y = 0.0f;
+				translation.z = 0.0f;
+			}
+			else {
+				float offset = -80.0f + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (80.0f - -80.0f)));
+				translation.x = offset;
+				translation.y = 0.0f;
+				offset = -80.0f + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (80.0f - -80.0f)));
+				translation.z = offset;
+			}
 			treeTranslations[index++] = translation;
 		}
 	}
@@ -147,6 +152,8 @@ void OpenGLWindow::renderScene() {
 	glShadeModel(GL_SMOOTH);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
+	glDisable(GL_BLEND);
+
 	// Get delta time
 	float _currentFrame = static_cast<float>(glfwGetTime());
 	_deltaTime = _currentFrame - _lastFrame;
@@ -164,34 +171,48 @@ void OpenGLWindow::renderScene() {
 	glm::mat4 model = glm::mat4(1.0f);
 	model = glm::scale(model, sceneScale);
 
-	_flowerShader.use();
-	_flowerShader.updateModelViewProjection(model, _sceneCamera.getViewMatrix(), _sceneCamera.getProjectionMatrix());
+	// Point sprites
+	pointsShader.use();
+	pointsShader.updateModelViewProjection(model, _sceneCamera.getViewMatrix(), _sceneCamera.getProjectionMatrix());
 
 	flowers.draw();
 
 	glFinish();
 
-	// Process shader(s)
-	_basicShader.use();
-	_basicShader.updateModelViewProjection(model, _sceneCamera.getViewMatrix(), _sceneCamera.getProjectionMatrix());
+	// Instancing trees
+	instancingShader.use();
+	instancingShader.updateModelViewProjection(model, _sceneCamera.getViewMatrix(), _sceneCamera.getProjectionMatrix());
 
-	// Lighting
-	_basicShader.setVec3("lightColor", lightColor);
-	_basicShader.setFloat("lightIntensity", lightIntensity);
-	_basicShader.setVec3("lightPos", lightPos);
-	_basicShader.setVec3("viewPos", _sceneCamera.getPosition());
-
-	_basicShader.setInt("width", _screenWidth);
-	_basicShader.setInt("height", _screenHeight);
-	_basicShader.setFloat("radius", _screenWidth / 3.5f); // used to be 3.5f
+	instancingShader.setVec3("lightColor", lightColor);
+	instancingShader.setFloat("lightIntensity", lightIntensity);
+	instancingShader.setVec3("lightPos", lightPos);
+	instancingShader.setVec3("viewPos", _sceneCamera.getPosition());
 
 	for (unsigned int i = 0; i < 100; i++)
 	{
-		_basicShader.setVec3("offsets[" + std::to_string(i) + "]", treeTranslations[i]);
+		instancingShader.setVec3("offsets[" + std::to_string(i) + "]", treeTranslations[i]);
 	}
 
-	treeModel.draw(10);
-	floorModel.draw(1);
+	treeModel.draw(7);
+	floorModel.draw();
+
+	glFinish();
+
+	// Vertex animation
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	vertexanimShader.use();
+	vertexanimShader.updateModelViewProjection(model, _sceneCamera.getViewMatrix(), _sceneCamera.getProjectionMatrix());
+
+	vertexanimShader.setVec3("lightColor", lightColor);
+	vertexanimShader.setFloat("lightIntensity", lightIntensity);
+	vertexanimShader.setVec3("lightPos", lightPos);
+	vertexanimShader.setVec3("viewPos", _sceneCamera.getPosition());
+	
+	vertexanimShader.setFloat("time", glfwGetTime());
+	
+	oceanModel.draw();
 
 	glFinish();
 
@@ -201,7 +222,7 @@ void OpenGLWindow::renderScene() {
 }
 
 void OpenGLWindow::closeApp() {
-	_basicShader.deleteShader();
+	instancingShader.deleteShader();
 	_snowflakeShader.deleteShader();
 
 	glfwDestroyWindow(_window);
@@ -227,14 +248,6 @@ void processInput(GLFWwindow* window)
 	}
 	if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS) {
 		fov = 10.0f;
-	}
-
-	// Fog toggle
-	if (glfwGetKey(window, GLFW_KEY_F) == GLFW_RELEASE) {
-		nightVision = false;
-	}
-	if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS) {
-		nightVision = true;
 	}
 }
 

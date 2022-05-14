@@ -47,6 +47,8 @@ class Points
 
     int numPoints = 100;
 
+    float y = 0.0f;
+
     //std::vector<glm::vec3> points;
     //glm::vec3 points[100];
 

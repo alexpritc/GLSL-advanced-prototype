@@ -10,11 +10,16 @@ layout (location = 5) in vec3 specularColor;
 
 layout (location = 5) in float dissolve;
 
-uniform vec3 offsets[100];
-
 uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
+
+uniform float time; // Animation time
+
+// Wave parameters
+uniform float frequency = 1.5f;
+uniform float velocity = 2.5f;
+uniform float amplitude = 1.25f;
 
 out vec3 color;
 out vec3 fragPos;
@@ -31,11 +36,21 @@ smooth out vec4 eyeSpacePos;
 
 void main()
 {
-    vec3 offset = offsets[gl_InstanceID];
-    fragPos = vec3(model * vec4(vertexPosition + offset, 1.0));
+    fragPos = vec3(model * vec4(vertexPosition, 1.0));
+
+    // Translate vertices on y axis
+    float u = frequency * fragPos.x - velocity * time;
+    float i = frequency * fragPos.z - velocity * time;
+   
+   fragPos.y = -2.0f + amplitude * sin(u) * sin(i);
+
     gl_Position = projection * view * vec4(fragPos, 1.0);
 
-    normal = vertexNormal;
+    // Compute normal vector
+  vec3 n = vec3(0.0);
+    n.xy = normalize(vec2(cos(u) + vec2(cos(i), 1.0)));
+
+    normal = vertexNormal * n;
     UV = vertexUV;
 
     Ka = ambientColor;
@@ -45,5 +60,5 @@ void main()
     alpha = dissolve;
 
     mat4 mvMatrix = view * model;
-    eyeSpacePos = mvMatrix * vec4(vertexPosition + offset, 1.0);
+    eyeSpacePos = mvMatrix * vec4(vertexPosition, 1.0);
 }
