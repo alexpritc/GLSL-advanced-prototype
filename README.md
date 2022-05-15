@@ -22,7 +22,7 @@ There are three different shader programs used in this project: instancing, vert
 
 Each shader program's vertex shader handles the Model View Projection matrix and its fragmnet shader handles the colour of vertices, texturing and phong lighting. The colouring of vertices specifically isn't handled in the vertex shader to avoid fragment interpolation. This achieves a cartoony asethetic.
 
-# What makes your shader program special and how does it compare to similar things?
+## What makes your shader program special and how does it compare to similar things?
 This project was started from scratch, with the idea being to create a clone of Minecraft asethetics. There is little unqiue about these shaders, truth be told. There are some performance issues but instancing the trees does reduce the load. There are improvements that could be made, with more knowledge on the subject, to improve the quality of the product.
 
 With further development, it could be used to:
