@@ -16,11 +16,11 @@ This project uses OpenGL 4.x and C++. It works by loading and rendering .obj fil
 * Instancing
 
 ## How does your code fit together and how should a programmer navigate it?
-All of the GLFW Window management is handled in it's own class, [OpenGLWindow.cpp](). Each window instance has it's own instances of [Model.cpp]() that loads the vertices, normals, indicies, material and texture information from an .obj file (path is specified). It binds this information to the shader program which is an instance of [Shader.cpp]() which reads from and writes to fragment and vertex shaders. 
+All of the GLFW Window management is handled in it's own class, `OpenGLWindow.cpp`. Each window instance has it's own instances of `Model.cpp` that loads the vertices, normals, indicies, material and texture information from an .obj file (path is specified). It binds this information to the shader program which is an instance of `Shader.cpp` which reads from and writes to fragment and vertex shaders. 
 
-There are three different shader programs used in this project: instancing (which instantiates *x* number of .obj models into the scene using `gl_InstanceID`), vertexanim (which changes the positions of the vertices on each draw call to simulate animation/movement), and points (which passes a set of points to a geometry shader to create a quad at that position and apply a texture).
+There are three different shader programs used in this project: `instancing` (which instantiates *x* number of .obj models into the scene using `gl_InstanceID`), `vertexanim` (which changes the positions of the vertices on each draw call to simulate animation/movement), and `points` (which passes a set of points to a geometry shader to create a quad at that position and apply a texture).
 
-Additionally, each shader program's vertex shader handles the Model View Projection matrix and its fragmnet shader handles the colour of vertices, texturing and phong lighting. The colouring of vertices specifically isn't handled in the vertex shader to avoid fragment interpolation. This achieves a cartoony asethetic.
+Additionally, each shader program's vertex shader handles the Model View Projection matrix and its fragment shader handles the colour of vertices, texturing and phong lighting. The colouring of vertices specifically isn't handled in the vertex shader to avoid fragment interpolation. This achieves a cartoony asethetic.
 
 ## What makes your shader program special and how does it compare to similar things?
 This project was started from scratch, with the idea being to create a clone of Minecraft asethetics. There is little unqiue about these shaders, truth be told. There are some performance issues but instancing the trees does reduce the load. There are improvements that could be made, with more knowledge on the subject, to improve the quality of the product.
