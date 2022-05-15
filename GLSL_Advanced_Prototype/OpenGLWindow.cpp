@@ -15,8 +15,8 @@ Shader vertexanimShader;
 
 // Lighting
 glm::vec3 lightPos(10.0f, 25.0f, 10.0f);
-glm::vec3 lightColor(0.9f, 0.9f, 0.9f);
-float lightIntensity = 0.10f;
+glm::vec3 lightColor(1.0f, 1.0f, 1.0f);
+float lightIntensity = .33f;
 
 const glm::vec3 sceneScale(1.0f, 1.75f, 1.0f);
 
@@ -26,8 +26,11 @@ const glm::vec3 cameraUp(0.0f, 1.0f, 0.0f);
 
 // Models
 Model treeModel;
+Model leavesModel;
+Model trunksModel;
 Model floorModel;
 Model oceanModel;
+Model worldModel;
 
 // Point sprites
 Points flowers;
@@ -77,11 +80,17 @@ bool OpenGLWindow::createOpenGLWindow(const std::string& windowTitle, bool showF
 	treeModel.loadFromFile("media/Trees.obj", "media/Trees.mtl");
 	treeModel.loadTextureFromFile("media/noise_texture.jpg");
 
+	leavesModel.loadFromFile("media/Leaves.obj", "media/Leaves.mtl");
+	leavesModel.loadTextureFromFile("media/noise_texture.jpg");
+
+	trunksModel.loadFromFile("media/Trunks.obj", "media/Trunks.mtl");
+	trunksModel.loadTextureFromFile("media/noise_texture.jpg");
+
 	floorModel.loadFromFile("media/Terrain.obj", "media/Terrain.mtl");
 	floorModel.loadTextureFromFile("media/minecraftgrass_texture.png");
 
 	oceanModel.loadFromFile("media/Ocean.obj", "media/Ocean.mtl");
-	oceanModel.loadTextureFromFile("media/no_texture.png");
+	oceanModel.loadTextureFromFile("media/noise_texture.jpg");
 
 	// Points
 	flowers.init();;
@@ -175,6 +184,11 @@ void OpenGLWindow::renderScene() {
 	pointsShader.use();
 	pointsShader.updateModelViewProjection(model, _sceneCamera.getViewMatrix(), _sceneCamera.getProjectionMatrix());
 
+	pointsShader.setVec3("lightColor", lightColor);
+	pointsShader.setFloat("lightIntensity", lightIntensity);
+	pointsShader.setVec3("lightPos", lightPos);
+	pointsShader.setVec3("viewPos", _sceneCamera.getPosition());
+
 	flowers.draw();
 
 	glFinish();
@@ -193,7 +207,7 @@ void OpenGLWindow::renderScene() {
 		instancingShader.setVec3("offsets[" + std::to_string(i) + "]", treeTranslations[i]);
 	}
 
-	treeModel.draw(7);
+	trunksModel.draw(7);
 	floorModel.draw();
 
 	glFinish();
@@ -211,8 +225,28 @@ void OpenGLWindow::renderScene() {
 	vertexanimShader.setVec3("viewPos", _sceneCamera.getPosition());
 	
 	vertexanimShader.setFloat("time", glfwGetTime());
+	vertexanimShader.setFloat("y", -2.5f);
+
+	vertexanimShader.setFloat("frequency", 1.5f);
+	vertexanimShader.setFloat("velocity", 2.5f);
+	vertexanimShader.setFloat("amplitude", 1.25f);
+
+	for (unsigned int i = 0; i < 100; i++)
+	{
+		vertexanimShader.setVec3("offsets[" + std::to_string(i) + "]", treeTranslations[i]);
+	}
 	
 	oceanModel.draw();
+
+	glDisable(GL_BLEND);
+
+	vertexanimShader.setFloat("y", 3.0f);
+
+	vertexanimShader.setFloat("frequency", 0.1f);
+	vertexanimShader.setFloat("velocity", 0.5f);
+	vertexanimShader.setFloat("amplitude", 0.5f);
+
+	leavesModel.draw(7);
 
 	glFinish();
 
